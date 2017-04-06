@@ -35,7 +35,7 @@ plot(data.merge$Extension,as.numeric(as.character(data.merge$release_extension))
 text(data.merge$Extension,as.numeric(as.character(data.merge$release_extension)),ylim=c(4,7),xlim=c(4,7),labels = substr(data.merge$game_date,9,11),cex=.8)
 abline(a=0,b=1)
 
-
+#Replicate Analysis but use $start_speed.x, which is Baseball Savant Start Speed and Has Increased Precision 
 a = data.merge$ax.y^2 + data.merge$ay.y^2 + data.merge$az.y^2
 b = 2*(data.merge$ax.y*data.merge$vx0.y+data.merge$ay.y*data.merge$vy0.y+data.merge$az.y*data.merge$vz0.y)
 c = data.merge$vx0.y^2 + data.merge$vy0.y^2 + data.merge$vz0.y^2 - (5280*as.numeric(as.character(data.merge$start_speed.x))/3600)^2
