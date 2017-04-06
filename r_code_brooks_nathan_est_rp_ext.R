@@ -1,27 +1,33 @@
 rm(list=ls())
+
+#Needs pitchRx to Run
 library(pitchRx)
 
-#setwd("C:/baseball/")
-
+#Scrape Data
 prx_scrape <- scrape(start = "2017-04-02", end = "2017-04-04")
-
 pitches <- prx_scrape$pitch
 at_bats <- prx_scrape$atbat
 
+#Solve Quadratic Equation for t of vR
 a = pitches$ax^2 + pitches$ay^2 + pitches$az^2
 b = 2*(pitches$ax*pitches$vx0+pitches$ay*pitches$vy0+pitches$az*pitches$vz0)
 c = pitches$vx0^2 + pitches$vy0^2 + pitches$vz0^2 - (5280*pitches$start_speed/3600)^2
 t = (-b-sqrt(b^2-4*a*c))/(2*a)
 pitches$yRelease = pitches$y0+pitches$vy0*t+.5*pitches$ay*t^2
 
+#Merge Dataframes
 pitches<-merge(pitches,at_bats[,c("num","gameday_link","pitcher_name")],by=c("num","gameday_link"),all.x=TRUE)
+
+#Calculate Extension
 pitches$Extension <- 60.5 - pitches$yRelease
 
+#Create an Aggregated Table, if you want one
 release_distance <- aggregate(yRelease~pitcher_name,data=pitches,FUN=mean)
 release_distance$yRelease <- round(release_distance$yRelease,2)
 release_distance$Extension <- 60.5 - release_distance$yRelease
 release_distance_sorted <- release_distance[order(release_distance$yRelease),]
 
+#For matching with Savant Data
 pitches$home<-toupper(substr(pitches$gameday_link,23,25))
 
 
